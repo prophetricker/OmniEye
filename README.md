@@ -24,6 +24,12 @@ python -m unittest discover -s depth-service\tests -t depth-service
 python -m unittest discover -s esp32-firmware\tests -t esp32-firmware
 ```
 
+or:
+
+```powershell
+.\scripts\run_tests.ps1
+```
+
 ## Hardware Defaults
 
 - X4 connects to Windows through X4 WiFi.
