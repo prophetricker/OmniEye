@@ -124,21 +124,35 @@ int main(int argc, char** argv) {
     const auto camera_type = devices[0].camera_type;
     discovery.FreeDeviceDescriptors(devices);
 
-    auto delegate = std::make_shared<FileStreamDelegate>(args.output_dir);
-    camera->SetStreamDelegate(delegate);
+    auto file_delegate = std::make_shared<FileStreamDelegate>(args.output_dir);
+    std::shared_ptr<ins_camera::StreamDelegate> stream_delegate = file_delegate;
+    camera->SetStreamDelegate(stream_delegate);
 
     if (camera_type >= ins_camera::CameraType::Insta360X4) {
-        camera->SetVideoSubMode(ins_camera::SubVideoMode::VIDEO_NORMAL);
+        if (!camera->SetVideoSubMode(ins_camera::SubVideoMode::VIDEO_LIVEVIEW)) {
+            std::cerr << "Failed to switch camera to live view mode." << std::endl;
+            camera->Close();
+            return 4;
+        }
+
+        ins_camera::RecordParams record_params;
+        record_params.resolution = ins_camera::VideoResolution::RES_3840_1920P30;
+        record_params.bitrate = 0;
+        if (!camera->SetVideoCaptureParams(record_params, ins_camera::CameraFunctionMode::FUNCTION_MODE_LIVE_STREAM)) {
+            std::cerr << "Failed to set live stream capture parameters." << std::endl;
+            camera->Close();
+            return 4;
+        }
     }
 
     ins_camera::LiveStreamParam param;
     param.enable_audio = false;
     param.enable_video = true;
     param.enable_gyro = false;
-    param.using_lrv = true;
+    param.using_lrv = false;
     param.video_resolution = ins_camera::VideoResolution::RES_3840_1920P30;
     param.lrv_video_resulution = ins_camera::VideoResolution::RES_1440_720P30;
-    param.video_bitrate = 1024 * 1024 * 8;
+    param.video_bitrate = 1024 * 1024 / 2;
     param.lrv_video_bitrate = 1024 * 1024;
 
     if (!camera->StartLiveStreaming(param)) {
@@ -153,8 +167,8 @@ int main(int argc, char** argv) {
         const auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(
             std::chrono::steady_clock::now() - start).count();
         std::cout << "elapsed=" << elapsed
-                  << "s bytes=" << delegate->bytesWritten()
-                  << " last_ts=" << delegate->lastVideoTimestamp() << std::endl;
+                  << "s bytes=" << file_delegate->bytesWritten()
+                  << " last_ts=" << file_delegate->lastVideoTimestamp() << std::endl;
         if (args.seconds > 0 && elapsed >= args.seconds) {
             break;
         }
