@@ -12,6 +12,7 @@ frames/
 *.mp4
 *.jpg
 *.png
+*.jsonl
 *.bin
 *.dll
 *.lib

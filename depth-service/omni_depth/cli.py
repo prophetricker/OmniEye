@@ -3,6 +3,7 @@ import sys
 import time
 from pathlib import Path
 
+from .frame_haptics import FrameHapticResult, frames_to_mock_haptics, send_mock_haptics_to_serial
 from .frame_extraction import FrameExtractionResult, extract_sampled_frames
 from .haptics import DistanceSmoother, classify_distance, make_haptic_message
 from .roi import front_lower_roi, percentile_distance
@@ -40,7 +41,12 @@ def run_depth_map(depth_map_path, output_path):
     Path(output_path).write_text(make_haptic_message(level, distance or 0.0, 0.7), encoding="utf-8")
 
 
-def main(argv=None, extract_frames=extract_sampled_frames):
+def main(
+    argv=None,
+    extract_frames=extract_sampled_frames,
+    frame_haptics=frames_to_mock_haptics,
+    send_frame_haptics=send_mock_haptics_to_serial,
+):
     parser = argparse.ArgumentParser(description="OmniEye depth-service utilities")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
@@ -64,6 +70,17 @@ def main(argv=None, extract_frames=extract_sampled_frames):
     extract.add_argument("--sample-fps", type=float, default=1.0)
     extract.add_argument("--max-frames", type=int, default=0)
 
+    mock = subparsers.add_parser(
+        "frames-mock-distance",
+        help="Generate haptic JSON lines for sampled frames using explicit mock distances",
+    )
+    mock.add_argument("--frames-dir", required=True)
+    mock.add_argument("--distances", nargs="+", type=float, required=True)
+    mock.add_argument("--output")
+    mock.add_argument("--port")
+    mock.add_argument("--baudrate", type=int, default=115200)
+    mock.add_argument("--interval-s", type=float, default=0.5)
+
     args = parser.parse_args(argv)
     if args.command == "simulate":
         run_simulation(args.distances, args.output)
@@ -77,6 +94,21 @@ def main(argv=None, extract_frames=extract_sampled_frames):
             f"wrote {result.frames_written} frames to {result.output_dir} "
             f"(source_fps={result.source_fps:.2f})"
         )
+    elif args.command == "frames-mock-distance":
+        if args.port:
+            result = send_frame_haptics(
+                args.frames_dir,
+                args.distances,
+                args.port,
+                args.baudrate,
+                args.interval_s,
+            )
+            print(f"sent {result.frames_processed} haptic messages to {args.port}")
+        else:
+            if not args.output:
+                parser.error("frames-mock-distance requires --output unless --port is set")
+            result = frame_haptics(args.frames_dir, args.distances, args.output)
+            print(f"wrote {result.frames_processed} haptic messages to {result.output_path}")
     return 0
 
 

@@ -45,3 +45,26 @@ python -m omni_depth.cli extract-frames `
 ```
 
 This produces files such as `sampled-frames/frame_000001.jpg`. The MVP targets one frame every 1-2 seconds for DAP on a laptop GPU.
+
+## Mock Frame-to-Haptic Link
+
+Before DAP is wired in, use explicit mock distances to validate the frame-to-ESP32 protocol:
+
+```powershell
+python -m omni_depth.cli frames-mock-distance `
+  --frames-dir sampled-frames `
+  --distances 3.2 0.6 0.3 `
+  --output mock-messages.jsonl
+```
+
+Send the same messages to the ESP32/OLED over USB serial:
+
+```powershell
+python -m omni_depth.cli frames-mock-distance `
+  --frames-dir sampled-frames `
+  --distances 3.2 0.6 0.3 `
+  --port COM7 `
+  --interval-s 0.4
+```
+
+This is a temporary protocol smoke test. The distances are supplied manually; DAP will replace this source while preserving the same `haptic` JSON-line output.

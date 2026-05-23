@@ -19,6 +19,7 @@ X4 USB preview stream -> Windows agent -> H.264 decode/frame extraction -> depth
 刚完成的子任务：
 
 - `depth-service` 已新增 `extract-frames` CLI，可从 X4 H.264 预览流按低 FPS 抽出 JPEG 帧；已用 `preview_stream_0.h264` 实测抽出 3 张 JPEG，源帧率约 `29.97fps`。
+- `depth-service` 已新增临时 `frames-mock-distance` CLI，可把抽帧目录转换成 `haptic` JSON line，并已向 `COM7` 发送 3 条测试消息。
 
 ## Architecture Status
 
@@ -85,10 +86,10 @@ flowchart LR
 
 - Decode `preview_stream_0.h264` into sampled frames. Done for offline file mode; real-time callback extraction remains pending.
 - Add a repeatable frame extraction smoke test. Done for unit test and current X4 sample file; next is scripted real-time smoke.
-- Feed sampled frames into `depth-service`.
+- Feed sampled frames into `depth-service`. In progress: temporary mock-distance path works; DAP-backed distance remains pending.
 - If DAP is too heavy for immediate demo, add a temporary mock/depth-map mode that preserves the same output protocol.
-- Send live `haptic` JSON lines from Windows to ESP32 over USB serial.
-- Show live level/distance on OLED.
+- Send live `haptic` JSON lines from Windows to ESP32 over USB serial. Done for temporary frame mock path on `COM7`; continuous live loop remains pending.
+- Show live level/distance on OLED. Done for one-shot mock frame path; continuous live loop remains pending.
 - Replace OLED output with vibration motor driver after software path is stable.
 
 ### P1: DAP Integration

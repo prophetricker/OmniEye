@@ -55,6 +55,72 @@ class SerialCliTest(unittest.TestCase):
         self.assertEqual(exit_code, 0)
         self.assertEqual(calls, [(input_path, output_dir, 1.5, 4)])
 
+    def test_frames_mock_distance_command_invokes_converter(self):
+        calls = []
+
+        def fake_convert(frames_dir, distances, output_path):
+            calls.append((Path(frames_dir), distances, Path(output_path)))
+            return cli.FrameHapticResult(
+                frames_processed=2,
+                output_path=Path(output_path),
+            )
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            frames_dir = Path(tmpdir) / "frames"
+            output_path = Path(tmpdir) / "messages.jsonl"
+
+            with redirect_stdout(StringIO()):
+                exit_code = cli.main(
+                    [
+                        "frames-mock-distance",
+                        "--frames-dir",
+                        str(frames_dir),
+                        "--distances",
+                        "3.2",
+                        "0.6",
+                        "--output",
+                        str(output_path),
+                    ],
+                    frame_haptics=fake_convert,
+                )
+
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(calls, [(frames_dir, [3.2, 0.6], output_path)])
+
+    def test_frames_mock_distance_command_can_send_to_serial(self):
+        calls = []
+
+        def fake_send(frames_dir, distances, port, baudrate, interval_s):
+            calls.append((Path(frames_dir), distances, port, baudrate, interval_s))
+            return cli.FrameHapticResult(
+                frames_processed=1,
+                output_path=Path("serial"),
+            )
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            frames_dir = Path(tmpdir) / "frames"
+
+            with redirect_stdout(StringIO()):
+                exit_code = cli.main(
+                    [
+                        "frames-mock-distance",
+                        "--frames-dir",
+                        str(frames_dir),
+                        "--distances",
+                        "0.6",
+                        "--port",
+                        "COM7",
+                        "--baudrate",
+                        "9600",
+                        "--interval-s",
+                        "0.25",
+                    ],
+                    send_frame_haptics=fake_send,
+                )
+
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(calls, [(frames_dir, [0.6], "COM7", 9600, 0.25)])
+
 
 if __name__ == "__main__":
     unittest.main()
