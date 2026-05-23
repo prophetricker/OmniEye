@@ -1,10 +1,43 @@
 # Wiring
 
+## ESP32 to 0.96 inch OLED Placeholder
+
+Use this wiring for the current bring-up step. The OLED replaces the motor output and displays the received haptic level.
+
+Your OLED pin order from the screen-facing side is:
+
+```text
+GND VCC SCL SDA
+```
+
+Wire it as:
+
+| OLED pin | ESP32 pin | Notes |
+| --- | --- | --- |
+| GND | GND | Ground |
+| VCC | 3V3 | Use 3.3V first. |
+| SCL | GPIO 9 | I2C clock. |
+| SDA | GPIO 8 | I2C data. |
+
+Copy both files to the ESP32 root:
+
+- `esp32-firmware/micropython/main.py`
+- `esp32-firmware/micropython/ssd1306.py`
+
+Expected display after serial data arrives:
+
+```text
+OmniEye
+Level: 3
+Dist: 0.72m
+USB serial OK
+```
+
 ## ESP32 to Vibration Motor Driver
 
 Do not connect a vibration motor directly to an ESP32 GPIO. Use a MOSFET, transistor driver, or motor driver module.
 
-Default firmware pin:
+This is the later motor stage after OLED validation. The current firmware targets the OLED.
 
 | Signal | ESP32 | Notes |
 | --- | --- | --- |

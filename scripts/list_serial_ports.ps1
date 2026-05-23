@@ -1,12 +1,12 @@
 $ErrorActionPreference = "Stop"
 
-Write-Host "Available serial port names:"
-[System.IO.Ports.SerialPort]::GetPortNames() | Sort-Object | ForEach-Object {
+Write-Host "Serial port names:"
+[System.IO.Ports.SerialPort]::GetPortNames() | ForEach-Object {
     Write-Host "  $_"
 }
 
 Write-Host ""
-Write-Host "Windows port devices:"
-Get-PnpDevice -Class Ports -ErrorAction SilentlyContinue |
-    Select-Object Status,FriendlyName,InstanceId |
+Write-Host "Serial device details:"
+Get-CimInstance Win32_SerialPort |
+    Select-Object DeviceID, Name, Description, Manufacturer |
     Format-Table -AutoSize
