@@ -4,6 +4,7 @@ import time
 from pathlib import Path
 
 from .haptics import DistanceSmoother, classify_distance, make_haptic_message
+from .roi import front_lower_roi, percentile_distance
 
 
 def run_simulation(distances, output_path, confidence=0.9):
@@ -28,6 +29,16 @@ def send_simulation_to_serial(distances, port, baudrate=115200, interval_s=0.5):
             time.sleep(interval_s)
 
 
+def run_depth_map(depth_map_path, output_path):
+    import numpy as np
+
+    depth_map = np.load(depth_map_path)
+    roi = front_lower_roi(depth_map)
+    distance = percentile_distance(roi)
+    level = classify_distance(distance)
+    Path(output_path).write_text(make_haptic_message(level, distance or 0.0, 0.7), encoding="utf-8")
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description="OmniEye depth-service utilities")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -42,11 +53,17 @@ def main(argv=None):
     serial_sim.add_argument("--baudrate", type=int, default=115200)
     serial_sim.add_argument("--interval-s", type=float, default=0.5)
 
+    depth_map = subparsers.add_parser("depth-map", help="Convert a .npy depth map into one haptic message")
+    depth_map.add_argument("--input", required=True)
+    depth_map.add_argument("--output", required=True)
+
     args = parser.parse_args(argv)
     if args.command == "simulate":
         run_simulation(args.distances, args.output)
     elif args.command == "serial-sim":
         send_simulation_to_serial(args.distances, args.port, args.baudrate, args.interval_s)
+    elif args.command == "depth-map":
+        run_depth_map(args.input, args.output)
     return 0
 
 

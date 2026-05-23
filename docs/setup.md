@@ -19,3 +19,11 @@
 ## Dependency Strategy
 
 Heavy dependencies and model weights are intentionally not committed. Keep DAP weights under `dap_weights/` or `models/`, both ignored by Git.
+
+## Depth Service Smoke Test
+
+```powershell
+cd D:\MyProject\Bohack2\OmniEye
+python -m unittest discover -s depth-service\tests -t depth-service
+python -m omni_depth.cli simulate 3.2 1.2 0.6 0.3 --output messages.jsonl
+```

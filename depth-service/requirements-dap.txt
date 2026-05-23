@@ -1,0 +1,8 @@
+# Install a CUDA-compatible torch build manually for the laptop GPU first.
+# Example package set from the DAP project should be installed in a Python 3.10/3.11 environment.
+numpy
+opencv-python
+Pillow
+pyserial
+matplotlib
+tqdm
