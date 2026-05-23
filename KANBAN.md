@@ -16,6 +16,10 @@ X4 USB preview stream -> Windows agent -> H.264 decode/frame extraction -> depth
 - `depth-service`: 接收抽帧图像，接入 DAP 或先用替代深度输入跑通危险等级输出。
 - `ESP32`: 继续用 OLED 代替马达显示等级；物理串口和 OLED 冒烟测试已通过，实时 JSON line 联调正在做。
 
+刚完成的子任务：
+
+- `depth-service` 已新增 `extract-frames` CLI，可从 X4 H.264 预览流按低 FPS 抽出 JPEG 帧；已用 `preview_stream_0.h264` 实测抽出 3 张 JPEG，源帧率约 `29.97fps`。
+
 ## Architecture Status
 
 颜色约定：
@@ -79,8 +83,8 @@ flowchart LR
 
 ### P0: End-to-End Distance Haptic MVP
 
-- Decode `preview_stream_0.h264` into sampled frames.
-- Add a repeatable frame extraction smoke test.
+- Decode `preview_stream_0.h264` into sampled frames. Done for offline file mode; real-time callback extraction remains pending.
+- Add a repeatable frame extraction smoke test. Done for unit test and current X4 sample file; next is scripted real-time smoke.
 - Feed sampled frames into `depth-service`.
 - If DAP is too heavy for immediate demo, add a temporary mock/depth-map mode that preserves the same output protocol.
 - Send live `haptic` JSON lines from Windows to ESP32 over USB serial.

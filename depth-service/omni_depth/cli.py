@@ -3,6 +3,7 @@ import sys
 import time
 from pathlib import Path
 
+from .frame_extraction import FrameExtractionResult, extract_sampled_frames
 from .haptics import DistanceSmoother, classify_distance, make_haptic_message
 from .roi import front_lower_roi, percentile_distance
 
@@ -39,7 +40,7 @@ def run_depth_map(depth_map_path, output_path):
     Path(output_path).write_text(make_haptic_message(level, distance or 0.0, 0.7), encoding="utf-8")
 
 
-def main(argv=None):
+def main(argv=None, extract_frames=extract_sampled_frames):
     parser = argparse.ArgumentParser(description="OmniEye depth-service utilities")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
@@ -57,6 +58,12 @@ def main(argv=None):
     depth_map.add_argument("--input", required=True)
     depth_map.add_argument("--output", required=True)
 
+    extract = subparsers.add_parser("extract-frames", help="Extract sampled JPEG frames from an H.264/H.265 stream")
+    extract.add_argument("--input", required=True)
+    extract.add_argument("--output-dir", required=True)
+    extract.add_argument("--sample-fps", type=float, default=1.0)
+    extract.add_argument("--max-frames", type=int, default=0)
+
     args = parser.parse_args(argv)
     if args.command == "simulate":
         run_simulation(args.distances, args.output)
@@ -64,6 +71,12 @@ def main(argv=None):
         send_simulation_to_serial(args.distances, args.port, args.baudrate, args.interval_s)
     elif args.command == "depth-map":
         run_depth_map(args.input, args.output)
+    elif args.command == "extract-frames":
+        result = extract_frames(args.input, args.output_dir, args.sample_fps, args.max_frames)
+        print(
+            f"wrote {result.frames_written} frames to {result.output_dir} "
+            f"(source_fps={result.source_fps:.2f})"
+        )
     return 0
 
 
