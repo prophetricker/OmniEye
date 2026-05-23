@@ -4,7 +4,7 @@
 
 ```mermaid
 flowchart LR
-    X4[Insta360 X4] -->|X4 WiFi| Win[Windows laptop]
+    X4[Insta360 X4] -->|USB Android phone control| Win[Windows laptop]
     Win -->|CameraSDK preview stream| Agent[windows-agent]
     Agent -->|frames| Depth[depth-service]
     Depth -->|JSON line haptic command| Serial[USB serial]
@@ -15,6 +15,7 @@ flowchart LR
 ## Runtime Responsibilities
 
 - Windows owns X4 CameraSDK integration, frame extraction, and depth estimation.
+- The X4 USB mode for CameraSDK bring-up is `Android phone control`, not `File transfer` or `USB camera`.
 - ESP32 owns motor safety behavior and stops vibration if haptic messages time out.
 - Future speech messages reuse the same JSON-line serial channel.
 

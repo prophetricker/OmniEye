@@ -10,8 +10,8 @@
 
 ## First Hardware Checks
 
-1. User: turn on X4 WiFi/hotspot mode on the camera.
-2. User: connect the Windows laptop WiFi to the X4 network from the Windows taskbar WiFi menu.
+1. User: connect the X4 to the Windows laptop with a USB-C data cable.
+2. User: on the X4 USB prompt, choose `Android phone control`. Do not choose `File transfer` or `USB camera` for CameraSDK control.
 3. Codex or user: run the official `CameraSDKTest.exe` from the provided SDK package.
 4. Expected result: X4 serial number and firmware version are printed, and the camera opens.
 5. User: plug ESP32 into the Windows laptop with a USB data cable.

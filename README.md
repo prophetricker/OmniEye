@@ -5,7 +5,7 @@ OmniEye is a hackathon MVP for a blind-assistive perception helmet built around 
 ## MVP Data Flow
 
 ```text
-Insta360 X4 --X4 WiFi--> Windows laptop --USB serial--> ESP32 --PWM/GPIO--> vibration motor driver
+Insta360 X4 --USB Android phone control--> Windows laptop --USB serial--> ESP32 --PWM/GPIO--> vibration motor driver
 ```
 
 The first milestone focuses on distance-to-obstacle haptic feedback. Semantic scene description and speech output are reserved for a later milestone.
@@ -32,6 +32,6 @@ or:
 
 ## Hardware Defaults
 
-- X4 connects to Windows through X4 WiFi.
+- X4 connects to Windows through USB. On the X4 USB prompt, select `Android phone control`; the Windows CameraSDK also needs a libusbK-compatible camera driver.
 - ESP32 connects to Windows through USB serial.
 - Vibration motor must be driven by a transistor/MOSFET/driver module, not directly from an ESP32 GPIO.

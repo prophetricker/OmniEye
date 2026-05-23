@@ -14,10 +14,10 @@ cmake --build build --config Release
 
 ## Run
 
-Connect Windows to the X4 WiFi network first.
+Connect the X4 to Windows by USB. When the X4 asks for a USB mode, select `Android phone control`.
 
 ```powershell
 .\build\Release\omnieye_windows_agent.exe --output-dir frames --seconds 30
 ```
 
-If it cannot discover the camera, run the official `CameraSDKTest.exe` from the SDK package to validate the X4 WiFi connection before debugging OmniEye.
+If it cannot discover the camera, run the official `CameraSDKTest.exe` from the SDK package before debugging OmniEye. On Windows, the official Desktop CameraSDK path expects the camera to be in Android mode and to have a libusbK-compatible USB driver installed for the camera device.

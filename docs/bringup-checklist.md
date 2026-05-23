@@ -51,12 +51,15 @@ USB-first path:
 1. Keep Windows WiFi connected to the internet so Codex remains usable.
 2. Connect the Insta360 X4 to the Windows laptop with a USB-C data cable.
 3. Keep the X4 powered on.
-4. If the X4 asks for a USB mode, `U-Disk/File Transfer` is for file access and `Webcam Mode` is for UVC webcam output. Current evidence shows `U-Disk/File Transfer` does not make CameraSDK discover the X4.
-5. Ask Codex to run the official `CameraSDKTest.exe`.
-6. Expected result: the test program prints an X4 camera name, serial number, and firmware version, then opens the camera.
-7. If the result is `no device found`, keep Windows internet connected and use the WiFi fallback path when ready.
+4. If the X4 asks for a USB mode, choose `Android phone control`.
+5. Do not choose `File transfer`; that is only for file access. Do not choose `USB camera`; that is UVC webcam output, not CameraSDK control.
+6. Ask Codex to run `.\scripts\diagnose_x4_usb.ps1`.
+7. If the diagnosis shows no libusbK/WinUSB-like driver package for the X4, install/bind the Windows USB driver before blaming firmware.
+8. Ask Codex to run the official `CameraSDKTest.exe`.
+9. Expected result: the test program prints an X4 camera name, serial number, and firmware version, then opens the camera.
+10. If the result is `no device found`, check the X4 firmware version on the camera and update it through the Insta360 app or the official X4 firmware download/manual update flow.
 
-WiFi fallback path:
+WiFi fallback path, only if USB cannot be made to work:
 
 1. On the Insta360 X4, enable WiFi/hotspot mode from the camera quick settings.
 2. On the Windows laptop, click the WiFi icon in the taskbar.
