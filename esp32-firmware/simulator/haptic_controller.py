@@ -59,3 +59,7 @@ class HapticController:
             f"Dist: {distance}",
             status,
         ]
+
+    def remote_exec_command(self, level, distance_m):
+        level = max(0, min(4, int(level)))
+        return f"import main; main.show_haptic({level}, {float(distance_m):.2f})"

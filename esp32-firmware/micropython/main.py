@@ -25,8 +25,7 @@ current_level = 0
 current_distance = None
 last_drawn_state = None
 
-poller = select.poll()
-poller.register(sys.stdin, select.POLLIN)
+poller = None
 
 
 def clamp_level(value):
@@ -75,20 +74,40 @@ def handle_line(line):
     draw_status("USB serial OK")
 
 
+def show_haptic(level, distance_m):
+    global current_distance, current_level, last_haptic_ms
+    current_level = clamp_level(level)
+    current_distance = distance_m
+    last_haptic_ms = time.ticks_ms()
+    draw_status("USB serial OK")
+
+
 def poll_stdin():
+    global poller
+    if poller is None:
+        poller = select.poll()
+        poller.register(sys.stdin, select.POLLIN)
     if poller.poll(0):
         line = sys.stdin.readline()
         if line:
             handle_line(line.strip())
 
 
-while True:
-    poll_stdin()
-    if last_haptic_ms is None:
-        draw_status("Waiting data")
-    elif time.ticks_diff(time.ticks_ms(), last_haptic_ms) > TIMEOUT_MS:
-        current_level = 0
-        current_distance = None
-        last_haptic_ms = None
-        draw_status("Waiting data")
-    time.sleep_ms(50)
+def run_forever():
+    global current_distance, current_level, last_haptic_ms
+    while True:
+        poll_stdin()
+        if last_haptic_ms is None:
+            draw_status("Waiting data")
+        elif time.ticks_diff(time.ticks_ms(), last_haptic_ms) > TIMEOUT_MS:
+            current_level = 0
+            current_distance = None
+            last_haptic_ms = None
+            draw_status("Waiting data")
+        time.sleep_ms(50)
+
+
+draw_status("Waiting data")
+
+if __name__ == "__main__":
+    run_forever()

@@ -26,15 +26,21 @@ Owner: user handles physical wiring and flashing. Codex can inspect Windows seri
 8. Expected result: one entry like `USB Serial Device (COMx)` is the ESP32. Use that `COMx` in the serial test.
 9. Copy `esp32-firmware/micropython/main.py` and `esp32-firmware/micropython/ssd1306.py` to the ESP32 root.
 10. Reset the ESP32.
-11. Run:
+11. Preferred OLED test:
+
+```powershell
+py -m mpremote connect COM7 exec "import main; main.show_haptic(3, 0.72)"
+```
+
+Expected: the OLED shows `Level: 3`, `Dist: 0.72m`, and `USB serial OK`.
+
+12. JSON serial test, currently less reliable on this MicroPython image:
 
 ```powershell
 python -m omni_depth.cli serial-sim 3.2 1.2 0.6 0.3 --port COM7
 ```
 
 Replace `COM7` with the detected ESP32 port.
-
-Expected: the OLED updates `Level` and `Dist` as the simulated distance decreases.
 
 ## 3. X4 CameraSDK
 

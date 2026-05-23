@@ -50,6 +50,16 @@ class HapticControllerTest(unittest.TestCase):
             ["OmniEye", "Level: 0", "Dist: --", "Waiting data"],
         )
 
+    def test_builds_remote_oled_exec_command(self):
+        controller = HapticController(timeout_ms=2000)
+
+        command = controller.remote_exec_command(level=3, distance_m=0.72)
+
+        self.assertEqual(
+            command,
+            "import main; main.show_haptic(3, 0.72)",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
