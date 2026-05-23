@@ -10,11 +10,13 @@
 
 ## First Hardware Checks
 
-1. Connect the Windows laptop to the X4 WiFi network.
-2. Run the official `CameraSDKTest.exe` from the provided SDK package.
-3. Confirm the X4 is discovered and can be opened.
-4. Connect ESP32 over USB and identify its COM port in Device Manager.
-5. Run the host-side haptic simulator tests before flashing firmware.
+1. User: turn on X4 WiFi/hotspot mode on the camera.
+2. User: connect the Windows laptop WiFi to the X4 network from the Windows taskbar WiFi menu.
+3. Codex or user: run the official `CameraSDKTest.exe` from the provided SDK package.
+4. Expected result: X4 serial number and firmware version are printed, and the camera opens.
+5. User: plug ESP32 into the Windows laptop with a USB data cable.
+6. Codex or user: run `.\scripts\list_serial_ports.ps1` to identify the ESP32 COM port.
+7. Run the host-side haptic simulator tests before flashing firmware.
 
 ## Dependency Strategy
 
