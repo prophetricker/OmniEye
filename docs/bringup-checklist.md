@@ -45,9 +45,10 @@ USB-first path:
 1. Keep Windows WiFi connected to the internet so Codex remains usable.
 2. Connect the Insta360 X4 to the Windows laptop with a USB-C data cable.
 3. Keep the X4 powered on.
-4. If the X4 asks for a USB mode, choose a mode that allows computer/USB access rather than charge-only.
+4. If the X4 asks for a USB mode, `U-Disk/File Transfer` is for file access and `Webcam Mode` is for UVC webcam output. Current evidence shows `U-Disk/File Transfer` does not make CameraSDK discover the X4.
 5. Ask Codex to run the official `CameraSDKTest.exe`.
 6. Expected result: the test program prints an X4 camera name, serial number, and firmware version, then opens the camera.
+7. If the result is `no device found`, keep Windows internet connected and use the WiFi fallback path when ready.
 
 WiFi fallback path:
 
