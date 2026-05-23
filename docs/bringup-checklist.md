@@ -59,6 +59,15 @@ USB-first path:
 9. Expected result: the test program prints an X4 camera name, serial number, and firmware version, then opens the camera.
 10. If the result is `no device found`, check the X4 firmware version on the camera and update it through the Insta360 app or the official X4 firmware download/manual update flow.
 
+If the X4 says `switch failed` when selecting `Android phone control`:
+
+1. Keep the X4 connected in the current USB mode.
+2. Ask Codex to run `.\scripts\watch_x4_usb.ps1`.
+3. While the watcher is running, select `Android phone control` on the X4.
+4. If Windows only ever shows `USBSTOR` / `ExpressL USBX storage dev`, the camera did not successfully leave storage mode.
+5. If Windows briefly shows an Android, unknown USB, WinUSB, or libusb-like device and then drops it, the failure is likely driver binding or USB link stability.
+6. Test the same X4 cable and USB mode against an Android phone. If phone control also fails, prioritize X4 firmware update, reboot, battery level, and cable. If phone control works, prioritize Windows driver binding.
+
 WiFi fallback path, only if USB cannot be made to work:
 
 1. On the Insta360 X4, enable WiFi/hotspot mode from the camera quick settings.
